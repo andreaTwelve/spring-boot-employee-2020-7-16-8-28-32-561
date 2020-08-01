@@ -83,17 +83,17 @@ public class EmployeeIntegrationTest {
     void should_return_employee_when_get_employee_by_id_given_employee_id() throws Exception {
         //given
         Company company = new Company(1, "test", 100);
-        companyRepository.save(company);
-        Employee employee = new Employee(1, "tom", 12, "male", 1111, company.getId());
-        employeeRepository.save(employee);
+        Company newCompany = companyRepository.save(company);
+        Employee employee = new Employee(1, "tom", 12, "male", 1111, newCompany.getId());
+        Employee newEmployee = employeeRepository.save(employee);
 
-        mockMvc.perform(get("/employees/{id}", 2).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/employees/{id}", newEmployee.getId()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("tom"))
                 .andExpect(jsonPath("$.age").value(12))
                 .andExpect(jsonPath("$.gender").value("male"))
                 .andExpect(jsonPath("$.salary").value(1111))
-                .andExpect(jsonPath("$.companyId").value(1));
+                .andExpect(jsonPath("$.companyId").value(newCompany.getId()));
 
         //when//then
     }
