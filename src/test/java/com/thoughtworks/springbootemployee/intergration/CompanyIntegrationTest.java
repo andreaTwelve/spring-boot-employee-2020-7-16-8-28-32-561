@@ -57,16 +57,15 @@ public class CompanyIntegrationTest {
     @Test
     void should_return_companies_when_get_companies_given_none() throws Exception {
         //given
-        companyRepository.save(new Company(1, "test", 100));
-        companyRepository.save(new Company(2, "test1", 100));
-        companyRepository.save(new Company(3, "test3", 100));
+        companyRepository.save(new Company(1, "oocl1", 1001));
+        companyRepository.save(new Company(2, "oocl2", 1002));
+        companyRepository.save(new Company(3, "oocl3", 1003));
 
-        mockMvc.perform(get("/companies"))
-                .andExpect(status().isOk());
-//                .andExpect(jsonPath("$", hasSize(3)))
-//                .andExpect(jsonPath("$[0].id").isNumber())
-//                .andExpect(jsonPath("$[0].companyName").value("test"))
-//                .andExpect(jsonPath("$[0].employeesNumber").value(100));
+        mockMvc.perform(get("/companies").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").isNumber())
+                .andExpect(jsonPath("$[0].companyName").value("oocl1"))
+                .andExpect(jsonPath("$[0].employeesNumber").value(1001));
 
         //when//then
     }
@@ -147,14 +146,14 @@ public class CompanyIntegrationTest {
 
     @Test
     void should_return_updated_company_when_update_company_given_company_id() throws Exception {
-        Company updatedCompany = companyRepository.save(new Company(1, "oocl", 1000));
+        Company company = companyRepository.save(new Company(1, "oocl", 1000));
         String jsonCompany = "{\n" +
                 "    \"companyName\": \"oocl\",\n" +
-                "    \"employeesNumber\": 1000\n" +
+                "    \"employeesNumber\": 10001\n" +
                 "}";
-        mockMvc.perform(put("/companies/{id}", updatedCompany.getId()).contentType(MediaType.APPLICATION_JSON).content(jsonCompany))
+        mockMvc.perform(put("/companies/{id}", company.getId()).contentType(MediaType.APPLICATION_JSON).content(jsonCompany))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.companyName").value("oocl"))
-                .andExpect(jsonPath("$.employeesNumber").value(1000));
+                .andExpect(jsonPath("$.employeesNumber").value(10001));
     }
 }
