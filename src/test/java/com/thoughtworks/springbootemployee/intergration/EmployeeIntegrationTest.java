@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class EmployeeIntergrationTest {
+public class EmployeeIntegrationTest {
     @Autowired
     CompanyRepository companyRepository;
     @Autowired
@@ -39,13 +39,13 @@ public class EmployeeIntergrationTest {
     void should_return_employee_when_add_employee_given_employee() throws Exception {
         //given
         Company company = new Company(1, "test", 100);
-        companyRepository.save(company);
+        Company newCompany = companyRepository.save(company);
         String jsonEmployee = "{\n" +
                 "            \"name\": \"Change\",\n" +
                 "            \"age\": 18,\n" +
                 "            \"gender\": \"male\",\n" +
                 "            \"salary\": 55,\n" +
-                "            \"companyId\": " + company.getId() + "\n" +
+                "            \"companyId\": " + newCompany.getId() + "\n" +
                 "        }";
         mockMvc.perform(post("/employees").contentType(MediaType.APPLICATION_JSON).content(jsonEmployee))
                 .andExpect(status().isCreated())
@@ -53,7 +53,7 @@ public class EmployeeIntergrationTest {
                 .andExpect(jsonPath("$.age").value(18))
                 .andExpect(jsonPath("$.gender").value("male"))
                 .andExpect(jsonPath("$.salary").value(55))
-                .andExpect(jsonPath("$.companyId").value(1));
+                .andExpect(jsonPath("$.companyId").value(newCompany.getId()));
 
         //when//then
     }
@@ -145,8 +145,8 @@ public class EmployeeIntergrationTest {
     void should_return_none_when_delete_employee_by_gender_given_employee_id() throws Exception {
         //given
         Company company = new Company(1, "test", 100);
-        companyRepository.save(company);
-        Employee employee = new Employee(1, "tom", 12, "male", 1111, company.getId());
+        Company newCompany = companyRepository.save(company);
+        Employee employee = new Employee(1, "tom", 12, "male", 1111, newCompany.getId());
         employeeRepository.save(employee);
 
 

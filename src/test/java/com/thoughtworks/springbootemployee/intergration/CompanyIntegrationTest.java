@@ -69,6 +69,24 @@ public class CompanyIntegrationTest {
     }
 
     @Test
+    void should_return_employees_when_get_company_by_id_given_company_id() throws Exception {
+        //given
+        Company company = new Company(1, "test", 100);
+        Company newCompany = companyRepository.save(company);
+
+
+        mockMvc.perform(get("/companies/{id}/employees", 1).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("tom"));
+//                .andExpect(jsonPath("$.employees[0].name").value("tom"));
+//                .andExpect(jsonPath("$.employees[0].name").value("tom"));
+//                .andExpect(jsonPath("$.employees[0].name").value("tom"));
+//                .andExpect(jsonPath("$.employees[0].name").value("tom"));
+
+        //when//then
+    }
+
+    @Test
     void should_return_employee_when_get_company_by_id_given_company_id() throws Exception {
         //given
         Company company = new Company(1, "test", 100);
