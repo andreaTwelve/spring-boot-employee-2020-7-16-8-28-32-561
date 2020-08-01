@@ -148,10 +148,10 @@ public class EmployeeIntegrationTest {
         Company company = new Company(1, "test", 100);
         Company newCompany = companyRepository.save(company);
         Employee employee = new Employee(1, "tom", 12, "male", 1111, newCompany.getId());
-        employeeRepository.save(employee);
+        Employee newEmployee = employeeRepository.save(employee);
 
 
-        mockMvc.perform(delete("/employees/2").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/employees/{id}", newEmployee.getId()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         //when//then
