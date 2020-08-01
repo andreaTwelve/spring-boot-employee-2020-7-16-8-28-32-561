@@ -109,8 +109,8 @@ public class CompanyIntegrationTest {
     void should_return_none_when_delete_employee_by_gender_given_employee_id() throws Exception {
         //given
         Company company = new Company(1, "test", 100);
-        companyRepository.save(company);
-        Employee employee = new Employee(1, "tom", 12, "male", 1111, company.getId());
+        Company newCompany = companyRepository.save(company);
+        Employee employee = new Employee(1, "tom", 12, "male", 1111, newCompany.getId());
         employeeRepository.save(employee);
 
 
