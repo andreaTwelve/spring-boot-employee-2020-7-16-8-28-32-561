@@ -69,7 +69,7 @@ public class CompanyIntegrationTest {
     }
 
     @Test
-    void should_return_employee_when_get_employee_by_id_given_employee_id() throws Exception {
+    void should_return_employee_when_get_company_by_id_given_company_id() throws Exception {
         //given
         Company company = new Company(1, "test", 100);
         Company newCompany = companyRepository.save(company);
@@ -106,7 +106,7 @@ public class CompanyIntegrationTest {
     }
 
     @Test
-    void should_return_none_when_delete_employee_by_gender_given_employee_id() throws Exception {
+    void should_return_none_when_delete_company_by_gender_given_company_id() throws Exception {
         //given
         Company company = new Company(1, "test", 100);
         Company newCompany = companyRepository.save(company);
