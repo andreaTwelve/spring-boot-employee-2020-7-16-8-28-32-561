@@ -72,8 +72,8 @@ public class CompanyIntegrationTest {
     void should_return_employee_when_get_employee_by_id_given_employee_id() throws Exception {
         //given
         Company company = new Company(1, "test", 100);
-        companyRepository.save(company);
-        Employee employee = new Employee(1, "tom", 12, "male", 1111, company.getId());
+        Company newCompany = companyRepository.save(company);
+        Employee employee = new Employee(1, "tom", 12, "male", 1111, newCompany.getId());
         employeeRepository.save(employee);
 
         mockMvc.perform(get("/companies/{id}", 1).contentType(MediaType.APPLICATION_JSON))

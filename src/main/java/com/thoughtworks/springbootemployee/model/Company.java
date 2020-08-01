@@ -13,8 +13,6 @@ public class Company {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyId")
     private List<Employee> employees;
 
-
-
     public Company() {
     }
 
