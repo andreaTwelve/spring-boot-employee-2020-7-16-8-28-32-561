@@ -99,7 +99,7 @@ public class EmployeeIntegrationTest {
     }
 
     @Test
-    void should_return_employee_when_get_employee_by_gender_given_employee_gender() throws Exception {
+    void should_return_employees_when_get_employee_by_gender_given_employee_gender() throws Exception {
         //given
         Company company = new Company(1, "test", 100);
         Company newCompany = companyRepository.save(company);
