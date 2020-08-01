@@ -130,7 +130,7 @@ public class CompanyIntegrationTest {
     }
 
     @Test
-    void should_return_none_when_delete_company_by_gender_given_company_id() throws Exception {
+    void should_return_none_when_delete_company_by_id_given_company_id() throws Exception {
         //given
         Company company = new Company(1, "test", 100);
         Company newCompany = companyRepository.save(company);
@@ -138,7 +138,7 @@ public class CompanyIntegrationTest {
         employeeRepository.save(employee);
 
 
-        mockMvc.perform(delete("/companies/1").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/companies/{id}", newCompany.getId()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         //when//then
