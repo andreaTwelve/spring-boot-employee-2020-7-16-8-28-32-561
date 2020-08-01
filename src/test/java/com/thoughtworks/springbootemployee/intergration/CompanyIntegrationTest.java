@@ -92,10 +92,8 @@ public class CompanyIntegrationTest {
         //given
         Company company = new Company(1, "test", 100);
         Company newCompany = companyRepository.save(company);
-        Employee employee = new Employee(1, "tom", 12, "male", 1111, newCompany.getId());
-        employeeRepository.save(employee);
 
-        mockMvc.perform(get("/companies/{id}", 1).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/companies/{id}", newCompany.getId()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.companyName").value("test"))
                 .andExpect(jsonPath("$.employeesNumber").value(100));
