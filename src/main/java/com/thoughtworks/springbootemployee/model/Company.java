@@ -6,11 +6,12 @@ import java.util.List;
 @Entity
 public class Company {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String companyName;
     private Integer employeesNumber;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyId")
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = Employee.class)
+    @JoinColumn(name = "company_id")
     private List<Employee> employees;
 
     public Company() {

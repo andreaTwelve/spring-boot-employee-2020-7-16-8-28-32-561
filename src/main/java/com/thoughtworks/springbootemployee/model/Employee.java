@@ -1,21 +1,20 @@
 package com.thoughtworks.springbootemployee.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "employee")
 public class Employee {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     private Integer age;
     private String gender;
     private Integer salary;
 
+    @Column(name = "company_id")
     private Integer companyId;
 
     public Employee() {

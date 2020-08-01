@@ -8,20 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EmployeeMapperTest {
-    @Autowired
-    private EmployeeRequest employeeRequest;
-
-    @Autowired
-    private EmployeeMapper employeeMapper;
+    //@Autowired
+    private final EmployeeRequestMapper employeeRequestMapper = new EmployeeRequestMapper();
 
     @Test
     void should_return_employee_dto_when_to_employee_given_request_employee() {
-        Employee employeeDto = employeeMapper.toEmployee(employeeRequest);
-        assertEquals(employeeDto.getId(), employeeRequest.getId());
+        EmployeeRequest employeeRequest = new EmployeeRequest(1, "test", 18, "female", 900);
+        Employee employeeDto = employeeRequestMapper.toEmployee(employeeRequest);
+        //assertEquals(employeeDto.getId(), employeeRequest.getId());
         assertEquals(employeeDto.getName(), employeeRequest.getName());
         assertEquals(employeeDto.getAge(), employeeRequest.getAge());
         assertEquals(employeeDto.getGender(), employeeRequest.getGender());
-        assertEquals(employeeDto.getId(), employeeRequest.getSalary());
+        assertEquals(employeeDto.getSalary(), employeeRequest.getSalary());
     }
 
 }

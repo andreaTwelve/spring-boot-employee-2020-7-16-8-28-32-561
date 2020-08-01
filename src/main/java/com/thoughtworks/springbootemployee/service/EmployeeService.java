@@ -1,7 +1,10 @@
 package com.thoughtworks.springbootemployee.service;
 
+import com.thoughtworks.springbootemployee.dto.EmployeeRequest;
 import com.thoughtworks.springbootemployee.exception.ExceptionMessage;
+import com.thoughtworks.springbootemployee.exception.NotExistEmployeeException;
 import com.thoughtworks.springbootemployee.exception.NotFoundIDException;
+import com.thoughtworks.springbootemployee.mapper.EmployeeRequestMapper;
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +13,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private EmployeeRequestMapper employeeRequestMapper;
 
 //    public EmployeeService(EmployeeRepository employeeRepository) {
 //        this.employeeRepository = employeeRepository;
@@ -24,18 +31,23 @@ public class EmployeeService {
         return this.employeeRepository.findAll();
     }
 
-    public Employee addEmployee(Employee employee) {
+    public Employee addEmployee(EmployeeRequest employeeRequest) {
+        Employee employee = employeeRequestMapper.toEmployee(employeeRequest);
         if (Objects.nonNull(employee)) {
             return employeeRepository.save(employee);
         }
         return null;
     }
 
-    public Employee findEmployeeById(Integer employeeId) {
-        return employeeRepository.findById(employeeId).orElse(null);
+    public Employee findEmployeeById(Integer employeeId) throws NotExistEmployeeException {
+        Optional<Employee> employees = employeeRepository.findById(employeeId);
+        if (employees.isPresent()) {
+            return employees.get();
+        }
+        throw new NotExistEmployeeException(ExceptionMessage.NOT_EXISTS_EMPLOYEE);
     }
 
-    public boolean deleteById(Integer employeeId) {
+    public boolean deleteById(Integer employeeId) throws NotExistEmployeeException {
         if (Objects.nonNull(employeeId) && Objects.nonNull(findEmployeeById(employeeId))) {
             employeeRepository.deleteById(employeeId);
             return true;
@@ -47,10 +59,10 @@ public class EmployeeService {
         return employeeRepository.findAllByGender(gender);
     }
 
-    public Employee updateEmployeeById(int employeeId, Employee updateEmployee) throws NotFoundIDException {
+    public Employee updateEmployeeById(int employeeId, Employee updateEmployee) throws NotExistEmployeeException {
         Employee employee = findEmployeeById(employeeId);
         if (Objects.isNull(employee)) {
-            throw new NotFoundIDException(ExceptionMessage.NOT_FOUND_ID);
+            throw new NotExistEmployeeException(ExceptionMessage.NOT_EXISTS_EMPLOYEE);
         }
         updateEmployee.setId(employeeId);
         return employeeRepository.save(updateEmployee);

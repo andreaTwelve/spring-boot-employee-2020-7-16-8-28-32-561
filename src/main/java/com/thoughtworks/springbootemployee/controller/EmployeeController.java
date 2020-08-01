@@ -1,5 +1,7 @@
 package com.thoughtworks.springbootemployee.controller;
 
+import com.thoughtworks.springbootemployee.dto.EmployeeRequest;
+import com.thoughtworks.springbootemployee.exception.NotExistEmployeeException;
 import com.thoughtworks.springbootemployee.exception.NotFoundIDException;
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.service.EmployeeService;
@@ -32,25 +34,25 @@ public class EmployeeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Employee createEmployee(@RequestBody Employee employee) {
-
-        return employeeService.addEmployee(employee);
+    @ResponseBody
+    public Employee createEmployee(@RequestBody EmployeeRequest employeeRequest) {
+        return employeeService.addEmployee(employeeRequest);
     }
 
     @GetMapping("/{id}")
-    public Employee getEmployee(@PathVariable(name = "id") int id) {
+    public Employee getEmployee(@PathVariable(name = "id") int id) throws NotExistEmployeeException {
         return employeeService.findEmployeeById(id);
     }
 
 
     @PutMapping("/{id}")
-    public Employee updateEmployee(@PathVariable(name = "id") Integer id, @RequestBody Employee employee) throws NotFoundIDException {
+    public Employee updateEmployee(@PathVariable(name = "id") Integer id, @RequestBody Employee employee) throws NotExistEmployeeException {
         return employeeService.updateEmployeeById(id, employee);
 
     }
 
     @DeleteMapping("/{id}")
-    public String deleteEmployee(@PathVariable(name = "id") int id) {
+    public String deleteEmployee(@PathVariable(name = "id") int id) throws NotExistEmployeeException {
         if (employeeService.deleteById(id)) {
             return "delete success";
         }
