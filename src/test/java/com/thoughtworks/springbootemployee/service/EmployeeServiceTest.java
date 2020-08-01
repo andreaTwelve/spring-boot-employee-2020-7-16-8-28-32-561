@@ -1,6 +1,7 @@
 package com.thoughtworks.springbootemployee.service;
 
 import com.thoughtworks.springbootemployee.dto.EmployeeRequest;
+import com.thoughtworks.springbootemployee.exception.NotExistEmployeeException;
 import com.thoughtworks.springbootemployee.exception.NotFoundIDException;
 import com.thoughtworks.springbootemployee.mapper.EmployeeRequestMapper;
 import com.thoughtworks.springbootemployee.model.Employee;
@@ -66,17 +67,17 @@ public class EmployeeServiceTest {
         //then
         assertEquals(employee, actualEmployee);
     }
-//    @Test
-//    void should_return_employee_when_find_employees_by_id_given_employee_id() {
-//        //given
-//        int employeeId = 1;
-//        when(employeeRepository.findById(1)).thenReturn(Optional.of(new Employee(1, "test", 18, "female", 900)));
-//        //when
-//        Employee actualEmployee = employeeService.findEmployeeById(employeeId);
-//        //then
-//        assertNotNull(actualEmployee);
-//        assertEquals(1, actualEmployee.getId());
-//    }
+    @Test
+    void should_return_employee_when_find_employees_by_id_given_employee_id() throws NotExistEmployeeException {
+        //given
+        int employeeId = 1;
+        when(employeeRepository.findById(1)).thenReturn(Optional.of(new Employee(1, "test", 18, "female", 900)));
+        //when
+        Employee actualEmployee = employeeService.findEmployeeById(employeeId);
+        //then
+        assertNotNull(actualEmployee);
+        assertEquals(1, actualEmployee.getId());
+    }
 
 //    @Test
 //    void should_return_true_when_delete_employee_given_employee_id() {
@@ -139,10 +140,10 @@ public class EmployeeServiceTest {
         when(employeeRepository.save(updateEmployee)).thenReturn(updateEmployee);
         when(employeeRepository.findById(2)).thenReturn(Optional.of(updateEmployee));
         //when
-        NotFoundIDException notFoundIDException = assertThrows(NotFoundIDException.class, () -> {
+        NotExistEmployeeException notExistEmployeeException = assertThrows(NotExistEmployeeException.class, () -> {
             employeeService.updateEmployeeById(employeeId, updateEmployee);
         });
         //then
-        assertEquals(NotFoundIDException.class, notFoundIDException.getClass());
+        assertEquals(NotExistEmployeeException.class, notExistEmployeeException.getClass());
     }
 }
