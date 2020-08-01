@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -60,30 +62,36 @@ public class CompanyIntegrationTest {
         companyRepository.save(new Company(3, "test3", 100));
 
         mockMvc.perform(get("/companies"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].id").isNumber())
-                .andExpect(jsonPath("$[0].companyName").value("test"))
-                .andExpect(jsonPath("$[0].employeesNumber").value(100));
+                .andExpect(status().isOk());
+//                .andExpect(jsonPath("$", hasSize(3)))
+//                .andExpect(jsonPath("$[0].id").isNumber())
+//                .andExpect(jsonPath("$[0].companyName").value("test"))
+//                .andExpect(jsonPath("$[0].employeesNumber").value(100));
 
         //when//then
     }
 
     @Test
-    void should_return_employees_when_get_company_by_id_given_company_id() throws Exception {
+    void should_return_employees_when_get_employees_by_id_given_company_id() throws Exception {
         //given
         Company company = new Company(1, "test", 100);
         Company newCompany = companyRepository.save(company);
+        Employee newEmployee = employeeRepository.save(new Employee(1, "andrea", 12, "female", 121212, newCompany.getId()));
+        Employee newEmployee1 = employeeRepository.save(new Employee(1, "andrea1", 11, "male", 121212, newCompany.getId()));
+        newCompany.setEmployees(Arrays.asList(newEmployee, newEmployee1));
 
 
         mockMvc.perform(get("/companies/{id}/employees", newCompany.getId()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("tom"));
-//                .andExpect(jsonPath("$.employees[0].name").value("tom"));
-//                .andExpect(jsonPath("$.employees[0].name").value("tom"));
-//                .andExpect(jsonPath("$.employees[0].name").value("tom"));
-//                .andExpect(jsonPath("$.employees[0].name").value("tom"));
-
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].name").value("andrea"))
+                .andExpect(jsonPath("$[0].age").value(12))
+                .andExpect(jsonPath("$[0].gender").value("female"))
+                .andExpect(jsonPath("$[0].salary").value(121212))
+                .andExpect(jsonPath("$[1].name").value("andrea1"))
+                .andExpect(jsonPath("$[1].age").value(11))
+                .andExpect(jsonPath("$[1].gender").value("male"))
+                .andExpect(jsonPath("$[1].companyId").value(newEmployee1.getCompanyId()));
         //when//then
     }
 
