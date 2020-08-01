@@ -102,8 +102,8 @@ public class EmployeeIntegrationTest {
     void should_return_employee_when_get_employee_by_gender_given_employee_gender() throws Exception {
         //given
         Company company = new Company(1, "test", 100);
-        companyRepository.save(company);
-        Employee employee = new Employee(1, "tom", 12, "male", 1111, company.getId());
+        Company newCompany = companyRepository.save(company);
+        Employee employee = new Employee(1, "tom", 12, "male", 1111, newCompany.getId());
         employeeRepository.save(employee);
 
         mockMvc.perform(get("/employees").contentType(MediaType.APPLICATION_JSON).param("gender", "male"))
@@ -112,7 +112,7 @@ public class EmployeeIntegrationTest {
                 .andExpect(jsonPath("$[0].age").value(12))
                 .andExpect(jsonPath("$[0].gender").value("male"))
                 .andExpect(jsonPath("$[0].salary").value(1111))
-                .andExpect(jsonPath("$[0].companyId").value(1));
+                .andExpect(jsonPath("$[0].companyId").value(newCompany.getId()));
 
         //when//then
     }
