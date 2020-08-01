@@ -76,7 +76,7 @@ public class CompanyIntegrationTest {
         Company newCompany = companyRepository.save(company);
 
 
-        mockMvc.perform(get("/companies/{id}/employees", 1).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/companies/{id}/employees", newCompany.getId()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("tom"));
 //                .andExpect(jsonPath("$.employees[0].name").value("tom"));
@@ -88,7 +88,7 @@ public class CompanyIntegrationTest {
     }
 
     @Test
-    void should_return_employee_when_get_company_by_id_given_company_id() throws Exception {
+    void should_return_company_when_get_company_by_id_given_company_id() throws Exception {
         //given
         Company company = new Company(1, "test", 100);
         Company newCompany = companyRepository.save(company);
@@ -141,12 +141,12 @@ public class CompanyIntegrationTest {
 
     @Test
     void should_return_updated_company_when_update_company_given_company_id() throws Exception {
-        companyRepository.save(new Company(1, "oocl", 1000));
+        Company updatedCompany = companyRepository.save(new Company(1, "oocl", 1000));
         String jsonCompany = "{\n" +
                 "    \"companyName\": \"oocl\",\n" +
                 "    \"employeesNumber\": 1000\n" +
                 "}";
-        mockMvc.perform(put("/companies/1").contentType(MediaType.APPLICATION_JSON).content(jsonCompany))
+        mockMvc.perform(put("/companies/{id}", updatedCompany.getId()).contentType(MediaType.APPLICATION_JSON).content(jsonCompany))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.companyName").value("oocl"))
                 .andExpect(jsonPath("$.employeesNumber").value(1000));
