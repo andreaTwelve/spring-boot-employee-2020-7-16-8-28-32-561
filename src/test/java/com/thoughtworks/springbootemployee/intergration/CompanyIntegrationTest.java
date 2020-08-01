@@ -119,4 +119,17 @@ public class CompanyIntegrationTest {
 
         //when//then
     }
+
+    @Test
+    void should_return_updated_company_when_update_company_given_company_id() throws Exception {
+        companyRepository.save(new Company(1, "oocl", 1000));
+        String jsonCompany = "{\n" +
+                "    \"companyName\": \"oocl\",\n" +
+                "    \"employeesNumber\": 1000\n" +
+                "}";
+        mockMvc.perform(put("/companies/1").contentType(MediaType.APPLICATION_JSON).content(jsonCompany))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.companyName").value("oocl"))
+                .andExpect(jsonPath("$.employeesNumber").value(1000));
+    }
 }
