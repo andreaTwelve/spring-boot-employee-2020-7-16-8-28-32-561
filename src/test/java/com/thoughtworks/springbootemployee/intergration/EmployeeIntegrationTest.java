@@ -158,27 +158,27 @@ public class EmployeeIntegrationTest {
     }
 
     @Test
-    void should_return_updated_employee_when_update_employee_by_gender_given_employee_and_id() throws Exception {
+    void should_return_updated_employee_when_update_employee_given_employee_and_id() throws Exception {
         //given
         Company company = new Company(1, "test", 100);
-        companyRepository.save(company);
-        Employee employee = new Employee(1, "tom", 12, "male", 1111, company.getId());
-        employeeRepository.save(employee);
+        Company newCompany = companyRepository.save(company);
+        Employee employee = new Employee(1, "tom", 12, "male", 1111, newCompany.getId());
+        Employee newEmployee = employeeRepository.save(employee);
         String jsonEmployee = "{\n" +
                 "            \"name\": \"Change\",\n" +
                 "            \"age\": 18,\n" +
                 "            \"gender\": \"male\",\n" +
                 "            \"salary\": 55,\n" +
-                "            \"companyId\": " + company.getId() + "\n" +
+                "            \"companyId\": " + newCompany.getId() + "\n" +
                 "        }";
 
-        mockMvc.perform(put("/employees/2").contentType(MediaType.APPLICATION_JSON).content(jsonEmployee))
+        mockMvc.perform(put("/employees/{id}", newEmployee.getId()).contentType(MediaType.APPLICATION_JSON).content(jsonEmployee))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Change"))
                 .andExpect(jsonPath("$.age").value(18))
                 .andExpect(jsonPath("$.gender").value("male"))
                 .andExpect(jsonPath("$.salary").value(55))
-                .andExpect(jsonPath("$.companyId").value(1));
+                .andExpect(jsonPath("$.companyId").value(newCompany.getId()));
 
         //when//then
     }
