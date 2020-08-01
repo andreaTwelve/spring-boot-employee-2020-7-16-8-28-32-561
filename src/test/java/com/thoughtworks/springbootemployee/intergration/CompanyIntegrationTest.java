@@ -111,20 +111,17 @@ public class CompanyIntegrationTest {
     @Test
     void should_return_companies_when_get_companies_by_page_given_page_and_page_size() throws Exception {
         //given
-        companyRepository.save(new Company(1, "test", 100));
-        companyRepository.save(new Company(2, "test1", 100));
-        companyRepository.save(new Company(3, "test3", 100));
-        companyRepository.save(new Company(4, "test", 100));
-        companyRepository.save(new Company(5, "test1", 100));
-        companyRepository.save(new Company(6, "test3", 100));
+        Company newCompany1 = companyRepository.save(new Company(1, "oocl1", 1001));
+        Company newCompany2 = companyRepository.save(new Company(2, "test2", 1002));
+        Company newCompany3 = companyRepository.save(new Company(3, "test3", 1003));
+        Company newCompany4 = companyRepository.save(new Company(4, "test4", 1004));
+        Company newCompany5 = companyRepository.save(new Company(5, "test5", 1005));
+        Company newCompany6 = companyRepository.save(new Company(6, "test6", 1006));
 
         mockMvc.perform(get("/companies").contentType(MediaType.APPLICATION_JSON)
-                .param("page", "1").param("pageSize", "2"))
+                .param("page", "1").param("pageSize", "5"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id").isNumber())
-                .andExpect(jsonPath("$[0].companyName").value("test"))
-                .andExpect(jsonPath("$[0].employeesNumber").value(100));
+                .andExpect(jsonPath("$", hasSize(5)));
 
         //when//then
     }
