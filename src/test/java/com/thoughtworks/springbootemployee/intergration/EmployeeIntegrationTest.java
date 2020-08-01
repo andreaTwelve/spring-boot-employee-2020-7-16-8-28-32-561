@@ -5,6 +5,7 @@ import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.repository.CompanyRepository;
 import com.thoughtworks.springbootemployee.repository.EmployeeRepository;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class EmployeeIntegrationTest {
     @Autowired
     MockMvc mockMvc;
 
-    @AfterAll
+    @AfterEach
     public void after() {
         companyRepository.deleteAll();
         employeeRepository.deleteAll();
@@ -120,29 +121,29 @@ public class EmployeeIntegrationTest {
     void should_return_employees_when_get_employees_by_page_given_page_and_page_size() throws Exception {
         //given
         Company company = new Company(1, "test", 100);
-        companyRepository.save(company);
-        Employee employee = new Employee(1, "tom", 12, "male", 1111, company.getId());
-        employeeRepository.save(employee);
-        employeeRepository.save(new Employee(1, "tom", 12, "male", 1111, company.getId()));
-        employeeRepository.save(new Employee(1, "tom", 12, "male", 1111, company.getId()));
-        employeeRepository.save(new Employee(1, "tom", 12, "male", 1111, company.getId()));
-        employeeRepository.save(new Employee(1, "tom", 12, "male", 1111, company.getId()));
+        Company newCompany = companyRepository.save(company);
+        employeeRepository.save(new Employee(1, "tom", 12, "male", 1111, newCompany.getId()));
+        employeeRepository.save(new Employee(1, "tom", 12, "male", 1111, newCompany.getId()));
+        employeeRepository.save(new Employee(1, "tom", 12, "male", 1111, newCompany.getId()));
+        employeeRepository.save(new Employee(1, "tom", 12, "male", 1111, newCompany.getId()));
+        employeeRepository.save(new Employee(1, "tom", 12, "male", 1111, newCompany.getId()));
+        employeeRepository.save(new Employee(1, "tom", 12, "male", 1111, newCompany.getId()));
 
         mockMvc.perform(get("/employees").contentType(MediaType.APPLICATION_JSON)
-                .param("page", "1").param("pageSize", "2"))
+                .param("page", "1").param("pageSize", "5"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$", hasSize(5)))
                 .andExpect(jsonPath("$[0].name").value("tom"))
                 .andExpect(jsonPath("$[0].age").value(12))
                 .andExpect(jsonPath("$[0].gender").value("male"))
                 .andExpect(jsonPath("$[0].salary").value(1111))
-                .andExpect(jsonPath("$[0].companyId").value(1));
+                .andExpect(jsonPath("$[0].companyId").value(newCompany.getId()));
 
         //when//then
     }
 
     @Test
-    void should_return_none_when_delete_employee_by_gender_given_employee_id() throws Exception {
+    void should_return_none_when_delete_employee_given_employee_id() throws Exception {
         //given
         Company company = new Company(1, "test", 100);
         Company newCompany = companyRepository.save(company);
