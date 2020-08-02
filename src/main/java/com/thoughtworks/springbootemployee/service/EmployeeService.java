@@ -1,10 +1,11 @@
 package com.thoughtworks.springbootemployee.service;
 
 import com.thoughtworks.springbootemployee.dto.EmployeeRequest;
+import com.thoughtworks.springbootemployee.dto.EmployeeResponseDto;
 import com.thoughtworks.springbootemployee.exception.ExceptionMessage;
 import com.thoughtworks.springbootemployee.exception.NotExistEmployeeException;
-import com.thoughtworks.springbootemployee.exception.NotFoundIDException;
 import com.thoughtworks.springbootemployee.mapper.EmployeeRequestMapper;
+import com.thoughtworks.springbootemployee.mapper.EmployeeResponseMapper;
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class EmployeeService {
@@ -23,7 +23,14 @@ public class EmployeeService {
     @Autowired
     private EmployeeRequestMapper employeeRequestMapper;
 
-//    public EmployeeService(EmployeeRepository employeeRepository) {
+    private EmployeeResponseMapper employeeResponseMapper = new EmployeeResponseMapper();
+
+    public EmployeeService(EmployeeRepository employeeRepository, EmployeeRequestMapper employeeRequestMapper) {
+        this.employeeRepository = employeeRepository;
+        this.employeeRequestMapper = employeeRequestMapper;
+    }
+
+    //    public EmployeeService(EmployeeRepository employeeRepository) {
 //        this.employeeRepository = employeeRepository;
 //    }
 
@@ -33,18 +40,15 @@ public class EmployeeService {
 
     public Employee addEmployee(EmployeeRequest employeeRequest) {
         Employee employee = employeeRequestMapper.toEmployee(employeeRequest);
-        if (Objects.nonNull(employee)) {
-            return employeeRepository.save(employee);
-        }
-        return null;
+        return employeeRepository.save(employee);
     }
 
-    public Employee findEmployeeById(Integer employeeId) throws NotExistEmployeeException {
-        Optional<Employee> employees = employeeRepository.findById(employeeId);
-        if (employees.isPresent()) {
-            return employees.get();
+    public EmployeeResponseDto findEmployeeById(Integer employeeId) throws NotExistEmployeeException {
+        Employee employee = employeeRepository.findById(employeeId).orElse(null);
+        if (Objects.isNull(employee)) {
+            throw new NotExistEmployeeException(ExceptionMessage.NOT_EXISTS_EMPLOYEE);
         }
-        throw new NotExistEmployeeException(ExceptionMessage.NOT_EXISTS_EMPLOYEE);
+        return employeeResponseMapper.toResponseEmployee(employee);
     }
 
     public boolean deleteById(Integer employeeId) throws NotExistEmployeeException {
@@ -59,13 +63,18 @@ public class EmployeeService {
         return employeeRepository.findAllByGender(gender);
     }
 
-    public Employee updateEmployeeById(int employeeId, Employee updateEmployee) throws NotExistEmployeeException {
-        Employee employee = findEmployeeById(employeeId);
+    public Employee updateEmployeeById(int employeeId, EmployeeRequest employeeRequest) throws NotExistEmployeeException {
+        if (employeeId != employeeRequest.getId()) {
+            return null;
+        }
+        Employee employeeDto = employeeRequestMapper.toEmployee(employeeRequest);
+        Employee employee = employeeRepository.findById(employeeRequest.getId()).orElse(null);
         if (Objects.isNull(employee)) {
             throw new NotExistEmployeeException(ExceptionMessage.NOT_EXISTS_EMPLOYEE);
         }
-        updateEmployee.setId(employeeId);
-        return employeeRepository.save(updateEmployee);
+
+        //employeeDto.setId(employeeId);
+        return employeeRepository.save(employeeDto);
     }
 
     public List<Employee> findAll(int page, int pageSize) {

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EmployeeMapperTest {
+public class EmployeeRequestMapperTest {
     //@Autowired
     private final EmployeeRequestMapper employeeRequestMapper = new EmployeeRequestMapper();
 

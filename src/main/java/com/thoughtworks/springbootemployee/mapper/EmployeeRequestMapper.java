@@ -9,11 +9,13 @@ import org.springframework.stereotype.Component;
 public class EmployeeRequestMapper {
     public Employee toEmployee(EmployeeRequest employeeRequest) {
         Employee employee = new Employee();
-        employee.setName(employeeRequest.getName());
-        employee.setAge(employeeRequest.getAge());
-        employee.setGender(employeeRequest.getGender());
-        employee.setSalary(employeeRequest.getSalary());
-        //BeanUtils.copyProperties(employeeRequest, employee);
+//        employee.setId(employeeRequest.getId());
+//        employee.setName(employeeRequest.getName());
+//        employee.setAge(employeeRequest.getAge());
+//        employee.setGender(employeeRequest.getGender());
+//        employee.setSalary(employeeRequest.getSalary());
+//        employee.setCompanyId(employeeRequest.getCompanyId());
+        BeanUtils.copyProperties(employeeRequest, employee);
         return employee;
     }
 }

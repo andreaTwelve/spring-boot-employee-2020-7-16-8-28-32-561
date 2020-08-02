@@ -1,8 +1,15 @@
 package com.thoughtworks.springbootemployee.service;
 
+import com.thoughtworks.springbootemployee.dto.CompanyRequest;
+import com.thoughtworks.springbootemployee.dto.CompanyResponseDto;
+import com.thoughtworks.springbootemployee.exception.ExceptionMessage;
+import com.thoughtworks.springbootemployee.exception.NotExistCompanyException;
+import com.thoughtworks.springbootemployee.mapper.CompanyRequestMapper;
+import com.thoughtworks.springbootemployee.mapper.CompanyResponseMapper;
 import com.thoughtworks.springbootemployee.model.Company;
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.repository.CompanyRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +19,16 @@ import java.util.Objects;
 
 @Service
 public class CompanyService {
-    private final CompanyRepository companyRepository;
+    private CompanyRequestMapper companyRequestMapper;
 
-    public CompanyService(CompanyRepository companyRepository) {
+    private CompanyResponseMapper companyResponseMapper = new CompanyResponseMapper();
+
+    @Autowired
+    CompanyRepository companyRepository;
+
+    public CompanyService(CompanyRepository companyRepository,CompanyRequestMapper companyRequestMapper) {
         this.companyRepository = companyRepository;
+        this.companyRequestMapper = companyRequestMapper;
     }
 
 
@@ -23,12 +36,17 @@ public class CompanyService {
         return companyRepository.findAll();
     }
 
-    public Company addCompany(Company company) {
+    public Company addCompany(CompanyRequest companyRequest) {
+        Company company = companyRequestMapper.toCompany(companyRequest);
         return companyRepository.save(company);
     }
 
-    public Company findById(int companyId) {
-        return companyRepository.findById(companyId).orElse(null);
+    public CompanyResponseDto findById(int companyId) throws NotExistCompanyException {
+        Company company = companyRepository.findById(companyId).orElse(null);
+        if (Objects.isNull(company)) {
+            throw new NotExistCompanyException(ExceptionMessage.NOT_EXISTS_COMPANY);
+        }
+        return companyResponseMapper.toResponseCompany(company);
     }
 
     public List<Company> findAll(int page, int pageSize) {
@@ -39,7 +57,7 @@ public class CompanyService {
     }
 
     public boolean deleteById(Integer companyId) {
-        if (Objects.nonNull(companyId) && Objects.nonNull(findById(companyId))) {
+        if (Objects.nonNull(companyId) && Objects.nonNull(companyRepository.findById(companyId).orElse(null))) {
             companyRepository.deleteById(companyId);
             return true;
         }
@@ -47,7 +65,7 @@ public class CompanyService {
     }
 
     public Company updateCompanyById(int companyId, Company updateCompany) {
-        Company company = findById(companyId);
+        Company company = companyRepository.findById(companyId).orElse(null);
         if (Objects.nonNull(company)) {
             updateCompany.setId(companyId);
             return companyRepository.save(updateCompany);
@@ -56,7 +74,7 @@ public class CompanyService {
     }
 
     public List<Employee> getEmployeesByCompanyId(int companyId) {
-        Company company = findById(companyId);
+        Company company = companyRepository.findById(companyId).orElse(null);
         if (Objects.nonNull(company)) {
             return company.getEmployees();
         }

@@ -1,5 +1,10 @@
 package com.thoughtworks.springbootemployee.service;
 
+import com.thoughtworks.springbootemployee.dto.CompanyRequest;
+import com.thoughtworks.springbootemployee.dto.CompanyResponseDto;
+import com.thoughtworks.springbootemployee.exception.ExceptionMessage;
+import com.thoughtworks.springbootemployee.exception.NotExistCompanyException;
+import com.thoughtworks.springbootemployee.mapper.CompanyRequestMapper;
 import com.thoughtworks.springbootemployee.model.Company;
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.repository.CompanyRepository;
@@ -9,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -20,13 +26,16 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 public class CompanyServiceTest {
     private static List<Company> companies;
     @Mock
     CompanyRepository companyRepository;
+    @Mock
+    CompanyRequestMapper companyRequestMapper;
+
     @InjectMocks
     CompanyService companyService;
     @BeforeAll
@@ -55,28 +64,45 @@ public class CompanyServiceTest {
     }
 
     @Test
-    void should_return_employees_when_add_employee_given_employee() {
+    void should_return_new_company_when_add_company_given_company() {
         //given
+        CompanyRequest companyRequest = new CompanyRequest(1, "test", 100);
         Company company = new Company(1, "test", 100);
-        when(companyRepository.save(company)).thenReturn(company);
+        given(companyRequestMapper.toCompany(companyRequest)).willReturn(company);
+        given(companyRepository.save(company)).willReturn(company);
         //when
-        Company actualCompany = companyService.addCompany(company);
+        Company actualCompany = companyService.addCompany(companyRequest);
         //then
         assertNotNull(actualCompany);
         assertEquals(company, actualCompany);
+        //构造注入问题，可以了
+
     }
 
     @Test
-    void should_return_company_when_find_company_by_id_given_company_id() {
+    void should_return_company_when_find_company_by_id_given_company_id() throws NotExistCompanyException {
         //given
         int companyId = 1;
         Company expectCompany = companies.get(0);
         given(companyRepository.findById(companyId)).willReturn(Optional.of(expectCompany));
         //when
-        Company company = companyService.findById(companyId);
+        CompanyResponseDto companyResponseDto = companyService.findById(companyId);
         //then
-        assertNotNull(company);
-        assertEquals(expectCompany, company);
+        assertNotNull(companyResponseDto);
+        assertEquals(expectCompany.getCompanyName(), companyResponseDto.getCompanyName());
+    }
+
+    @Test
+    void should_return_none_when_find_company_by_id_given_wrong_company_id() {
+        //given
+        given(companyRepository.findById(anyInt())).willReturn(Optional.empty());
+        //when
+        NotExistCompanyException notExistCompanyException = assertThrows(NotExistCompanyException.class, () -> {
+            companyService.findById(anyInt());
+        });
+        //then
+        assertNull(notExistCompanyException.getMessage());
+        //assertEquals(ExceptionMessage.NOT_EXISTS_COMPANY, notExistCompanyException.getMessage());
     }
 
     @Test

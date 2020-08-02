@@ -1,5 +1,8 @@
 package com.thoughtworks.springbootemployee.controller;
 
+import com.thoughtworks.springbootemployee.dto.CompanyRequest;
+import com.thoughtworks.springbootemployee.dto.CompanyResponseDto;
+import com.thoughtworks.springbootemployee.exception.NotExistCompanyException;
 import com.thoughtworks.springbootemployee.model.Company;
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.service.CompanyService;
@@ -27,7 +30,7 @@ public class CompanyController {
 
 
     @GetMapping(path = "/{id}")
-    public Company getCompanyById(@PathVariable int id) {
+    public CompanyResponseDto getCompanyById(@PathVariable int id) throws NotExistCompanyException {
         return companyService.findById(id);
     }
 
@@ -38,8 +41,8 @@ public class CompanyController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Company createCompany(@RequestBody Company company) {
-        return companyService.addCompany(company);
+    public Company createCompany(@RequestBody CompanyRequest companyRequest) {
+        return companyService.addCompany(companyRequest);
     }
 
     @PutMapping("/{id}")

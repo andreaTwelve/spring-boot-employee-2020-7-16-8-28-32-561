@@ -1,8 +1,8 @@
 package com.thoughtworks.springbootemployee.controller;
 
 import com.thoughtworks.springbootemployee.dto.EmployeeRequest;
+import com.thoughtworks.springbootemployee.dto.EmployeeResponseDto;
 import com.thoughtworks.springbootemployee.exception.NotExistEmployeeException;
-import com.thoughtworks.springbootemployee.exception.NotFoundIDException;
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.service.EmployeeService;
 import org.springframework.http.HttpStatus;
@@ -40,14 +40,14 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public Employee getEmployee(@PathVariable(name = "id") int id) throws NotExistEmployeeException {
+    public EmployeeResponseDto getEmployee(@PathVariable(name = "id") int id) throws NotExistEmployeeException {
         return employeeService.findEmployeeById(id);
     }
 
 
     @PutMapping("/{id}")
-    public Employee updateEmployee(@PathVariable(name = "id") Integer id, @RequestBody Employee employee) throws NotExistEmployeeException {
-        return employeeService.updateEmployeeById(id, employee);
+    public Employee updateEmployee(@PathVariable(name = "id") Integer id, @RequestBody EmployeeRequest employeeRequest) throws NotExistEmployeeException {
+        return employeeService.updateEmployeeById(id, employeeRequest);
 
     }
 

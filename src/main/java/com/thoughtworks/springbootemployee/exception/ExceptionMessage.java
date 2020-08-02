@@ -2,8 +2,7 @@ package com.thoughtworks.springbootemployee.exception;
 
 public enum ExceptionMessage {
     NOT_EXISTS_EMPLOYEE("Not exists employee"),
-    NOT_FOUND_ID("Not Found Id"),
-    NULL_OBJECT("Not Found Object");
+    NOT_EXISTS_COMPANY("Not exists company");
 
     private final String value;
 
