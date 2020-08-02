@@ -8,10 +8,11 @@ public class NotExistEmployeeException extends Exception {
     }
 
     public NotExistEmployeeException(ExceptionMessage notExistsEmployee) {
+        this.errorMessage = notExistsEmployee.getValue();
     }
 
     @Override
     public String getMessage() {
-        return super.getMessage();
+        return this.errorMessage;
     }
 }

@@ -90,7 +90,7 @@ public class EmployeeServiceTest {
         });
         //then
         assertNull(notExistEmployeeException.getMessage());
-        //assertEquals(ExceptionMessage.NOT_EXISTS_COMPANY, notExistEmployeeException.getMessage());
+        assertEquals(ExceptionMessage.NOT_EXISTS_COMPANY, notExistEmployeeException.getMessage());
     }
 
 //    @Test
