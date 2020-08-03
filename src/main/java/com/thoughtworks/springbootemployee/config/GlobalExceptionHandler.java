@@ -13,6 +13,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     @ExceptionHandler(value = NotExistEmployeeException.class)
+    //// TODO: 8/3/2020 exception
     public String notExistEmployeeHandler(NotExistEmployeeException notExistEmployeeException) {
         return notExistEmployeeException.getMessage();
     }

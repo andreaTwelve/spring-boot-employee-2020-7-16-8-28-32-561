@@ -21,7 +21,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 public class EmployeeServiceTest {
@@ -80,7 +80,7 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    void should_return_employee_when_find_employees_by_id_given_wrong_employee_id() throws NotExistEmployeeException {
+    void should_return_employee_when_find_employees_by_id_given_wrong_employee_id() {
         //given
         Employee employee = new Employee();
         when(employeeRepository.findById(anyInt())).thenReturn(Optional.empty());
@@ -89,21 +89,19 @@ public class EmployeeServiceTest {
             employeeService.findEmployeeById(anyInt());
         });
         //then
-        assertNull(notExistEmployeeException.getMessage());
-        assertEquals(ExceptionMessage.NOT_EXISTS_COMPANY, notExistEmployeeException.getMessage());
+        assertEquals(ExceptionMessage.NOT_EXISTS_EMPLOYEE.getValue(), notExistEmployeeException.getMessage());
     }
 
-//    @Test
-//    void should_return_true_when_delete_employee_given_employee_id() {
-//        //todo
-//        //given
-//        int employeeId = 1;
-//        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(new Employee(employeeId, "test", 18, "female", 900)));
-//        //when
-//        boolean isDelete = employeeService.deleteById(employeeId);
-//        //then
-//        assertTrue(isDelete);
-//    }
+    @Test
+    void should_return_none_when_delete_employee_given_employee_id() {
+        //given
+        NotExistEmployeeException notExistEmployeeException = assertThrows(NotExistEmployeeException.class, () -> {
+            employeeService.deleteById(anyInt());
+        });
+        //when
+        //then
+        assertEquals(ExceptionMessage.NOT_EXISTS_EMPLOYEE.getValue(), notExistEmployeeException.getMessage());
+    }
 
     @Test
     void should_return_male_employees_when_find_employee_by_gender_given_male() {

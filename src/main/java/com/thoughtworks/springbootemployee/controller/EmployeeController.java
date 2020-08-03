@@ -52,11 +52,8 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{id}")
-    public String deleteEmployee(@PathVariable(name = "id") int id) throws NotExistEmployeeException {
-        if (employeeService.deleteById(id)) {
-            return "delete success";
-        }
-        return "delete fail";
+    public void deleteEmployee(@PathVariable(name = "id") int id) throws NotExistEmployeeException {
+        employeeService.deleteById(id);
     }
 
 }

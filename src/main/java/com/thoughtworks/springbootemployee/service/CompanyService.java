@@ -4,6 +4,7 @@ import com.thoughtworks.springbootemployee.dto.CompanyRequest;
 import com.thoughtworks.springbootemployee.dto.CompanyResponseDto;
 import com.thoughtworks.springbootemployee.exception.ExceptionMessage;
 import com.thoughtworks.springbootemployee.exception.NotExistCompanyException;
+import com.thoughtworks.springbootemployee.exception.NotExistEmployeeException;
 import com.thoughtworks.springbootemployee.mapper.CompanyRequestMapper;
 import com.thoughtworks.springbootemployee.mapper.CompanyResponseMapper;
 import com.thoughtworks.springbootemployee.model.Company;
@@ -42,10 +43,8 @@ public class CompanyService {
     }
 
     public CompanyResponseDto findById(int companyId) throws NotExistCompanyException {
-        Company company = companyRepository.findById(companyId).orElse(null);
-        if (Objects.isNull(company)) {
-            throw new NotExistCompanyException(ExceptionMessage.NOT_EXISTS_COMPANY);
-        }
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new NotExistCompanyException(ExceptionMessage.NOT_EXISTS_COMPANY));
         return companyResponseMapper.toResponseCompany(company);
     }
 

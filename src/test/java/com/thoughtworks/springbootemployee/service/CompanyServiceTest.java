@@ -101,8 +101,8 @@ public class CompanyServiceTest {
             companyService.findById(anyInt());
         });
         //then
-        assertNull(notExistCompanyException.getMessage());
-        //assertEquals(ExceptionMessage.NOT_EXISTS_COMPANY, notExistCompanyException.getMessage());
+        assertEquals(ExceptionMessage.NOT_EXISTS_COMPANY.getValue()
+                , notExistCompanyException.getMessage());
     }
 
     @Test

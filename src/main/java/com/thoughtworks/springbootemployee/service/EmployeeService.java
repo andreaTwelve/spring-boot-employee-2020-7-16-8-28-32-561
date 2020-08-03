@@ -44,19 +44,14 @@ public class EmployeeService {
     }
 
     public EmployeeResponseDto findEmployeeById(Integer employeeId) throws NotExistEmployeeException {
-        Employee employee = employeeRepository.findById(employeeId).orElse(null);
-        if (Objects.isNull(employee)) {
-            throw new NotExistEmployeeException(ExceptionMessage.NOT_EXISTS_EMPLOYEE);
-        }
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new NotExistEmployeeException(ExceptionMessage.NOT_EXISTS_EMPLOYEE));
         return employeeResponseMapper.toResponseEmployee(employee);
     }
 
-    public boolean deleteById(Integer employeeId) throws NotExistEmployeeException {
-        if (Objects.nonNull(employeeId) && Objects.nonNull(findEmployeeById(employeeId))) {
-            employeeRepository.deleteById(employeeId);
-            return true;
-        }
-        return false;
+    public void deleteById(Integer employeeId) throws NotExistEmployeeException {
+        employeeRepository.findById(employeeId).orElseThrow(() -> new NotExistEmployeeException(ExceptionMessage.NOT_EXISTS_EMPLOYEE));
+        employeeRepository.deleteById(employeeId);
     }
 
     public List<Employee> findAllByGender(String gender) {
